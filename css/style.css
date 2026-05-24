@@ -133,23 +133,31 @@ body {
   border: none;
   color: white;
   display: flex;
-  flex-direction: column; /* icon above text */
+  flex-direction: row;   
   align-items: center;
+  gap: 8px; 
   font-size: 12px;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 /* Icons */
 .bottom-bar img {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 5px;
+  width: 40px;
+  height: 40px;
+  transition: transform 0.2s ease;
 }
 
 /* Hover effect */
 .bottom-bar button:hover {
+  transform: translateY(-2px);
   color: #00d4ff;
 }
+
+.bottom-bar button:hover img {
+  transform: scale(1.2);
+}
+
 .map-box {
   height: 400px;
   background: #222;
