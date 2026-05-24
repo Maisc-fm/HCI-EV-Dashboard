@@ -1,5 +1,5 @@
-function loadScreen(screen) {
-  fetch(`screens/${screen}.html`)
+function loadScreen(components) {
+  fetch(`components/${components}.html`)
     .then(res => res.text())
     .then(data => {
       document.getElementById("content").innerHTML = data;
@@ -8,7 +8,7 @@ function loadScreen(screen) {
 
 /* Load default screen */
 window.onload = () => {
-  loadScreen("home");
+  loadScreen("dashboard");
 };
 
 /* Climate logic */
