@@ -1,4 +1,342 @@
-<h1>Dashboard</h1>
-<p>Speed: 72 km/h</p>
-<p>Battery: 78%</p>
-<p>Range: 320 km</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EV Dashboard</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#111;
+    color:white;
+    font-family:Arial, sans-serif;
+    overflow:hidden;
+}
+
+/* Main Dashboard */
+.dashboard{
+    width:100vw;
+    height:100vh;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+}
+
+/* ===== TOP SECTION ===== */
+.top-section{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    height:35%;
+}
+
+/* Shared card style */
+.card{
+    border-radius:20px;
+    background:rgba(255,255,255,0.03);
+}
+
+/* ===== BATTERY ===== */
+.battery-card{
+    width:28%;
+    height:220px;
+    padding:20px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.battery-card:hover{
+    background:rgba(255,255,255,0.08);
+}
+
+.battery-percent{
+    font-size:48px;
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.battery-container{
+    display:flex;
+    justify-content:center;
+}
+
+.battery{
+    width:220px;
+    height:90px;
+    border:5px solid white;
+    border-radius:12px;
+    position:relative;
+}
+
+.battery::after{
+    content:'';
+    position:absolute;
+    right:-20px;
+    top:25px;
+    width:15px;
+    height:30px;
+    background:white;
+    border-radius:4px;
+}
+
+.battery-fill{
+    width:100%;
+    height:100%;
+    background:linear-gradient(#85ff66,#00cc00);
+}
+
+/* ===== SPEEDOMETER ===== */
+.speedometer-card{
+    width:30%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.speedometer{
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    border:8px solid #333;
+    position:relative;
+}
+
+.speedometer::before{
+    content:'';
+    position:absolute;
+    width:50%;
+    height:50%;
+    border-top:5px solid lime;
+    border-left:5px solid lime;
+    border-radius:100% 0 0 0;
+    left:20px;
+    top:20px;
+    transform:rotate(-45deg);
+}
+
+.speed-text{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+}
+
+.speed-number{
+    font-size:56px;
+    font-weight:bold;
+}
+
+.speed-unit{
+    color:#aaa;
+}
+
+/* ===== CAR INFO ===== */
+.car-card{
+    width:28%;
+    height:220px;
+    padding:20px;
+    text-align:center;
+}
+
+.brand-name{
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.car-image{
+    width:100%;
+    height:120px;
+    object-fit:contain;
+}
+
+.location{
+    margin-top:10px;
+    font-size:22px;
+}
+
+.distance{
+    color:#ccc;
+    margin-top:5px;
+}
+
+/* ===== MAP ===== */
+.map-section{
+    flex:1;
+    margin-top:20px;
+}
+
+.map-card{
+    width:100%;
+    height:100%;
+    border-radius:25px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:0.3s;
+    position:relative;
+    background:
+    linear-gradient(rgba(255,255,255,.06), rgba(255,255,255,.06)),
+    #111;
+}
+
+.map-card:hover{
+    transform:scale(1.01);
+}
+
+.fake-road{
+    position:absolute;
+    width:130%;
+    height:4px;
+    background:#2e2e2e;
+    transform:rotate(12deg);
+}
+
+.route{
+    position:absolute;
+    width:280px;
+    height:8px;
+    background:linear-gradient(yellow,lime);
+    top:50%;
+    left:55%;
+    border-radius:20px;
+}
+
+.pin{
+    position:absolute;
+    width:40px;
+    height:40px;
+    background:lime;
+    border-radius:50%;
+    left:58%;
+    top:48%;
+}
+
+.pin::after{
+    content:'';
+    position:absolute;
+    width:0;
+    height:0;
+    border-left:10px solid transparent;
+    border-right:10px solid transparent;
+    border-top:18px solid lime;
+    bottom:-15px;
+    left:10px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+
+    <!-- TOP -->
+    <div class="top-section">
+
+        <!-- BATTERY -->
+        <div class="battery-card card"
+             onclick="window.location.href='battery.html'">
+
+            <div class="battery-percent">100%</div>
+
+            <div class="battery-container">
+                <div class="battery">
+                    <div class="battery-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPEEDOMETER -->
+        <div class="speedometer-card card">
+
+            <div class="speed-gauge">
+
+             <!-- Outer glow ring -->
+            <div class="gauge-ring"></div>
+
+             <!-- Tick marks -->
+             <div class="ticks">
+                <span style="--i:1"></span>
+                <span style="--i:2"></span>
+                <span style="--i:3"></span>
+                <span style="--i:4"></span>
+                <span style="--i:5"></span>
+                <span style="--i:6"></span>
+                <span style="--i:7"></span>
+                <span style="--i:8"></span>
+                <span style="--i:9"></span>
+                <span style="--i:10"></span>
+            </div>
+
+            <!-- Needle -->
+            <div class="needle"></div>
+
+            <!-- Center display -->
+            <div class="speed-display">
+                <div class="speed-number">80</div>
+                <div class="speed-unit">km/h</div>
+            </div>
+
+            </div>
+
+        </div>
+
+        <!-- CAR -->
+        <div class="car-card card">
+
+            <div class="brand-name">
+                ECHO BNF
+            </div>
+
+            <img
+            src="https://pngimg.com/d/ferrari_PNG10680.png"
+            class="car-image"
+            alt="Car">
+
+            <div class="location">
+                Kuching International Airport
+            </div>
+
+            <div class="distance">
+                12km
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MAP -->
+    <div class="map-section">
+
+        <div class="map-card"
+             onclick="window.location.href='navigation.html'">
+
+            <div class="fake-road"
+                 style="top:20%; left:-10%;"></div>
+
+            <div class="fake-road"
+                 style="top:40%; left:-10%; transform:rotate(-10deg);">
+            </div>
+
+            <div class="fake-road"
+                 style="top:65%; left:-10%; transform:rotate(8deg);">
+            </div>
+
+            <div class="route"></div>
+            <div class="pin"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

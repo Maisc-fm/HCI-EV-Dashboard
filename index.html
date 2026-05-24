@@ -10,11 +10,29 @@
 
 <div class="app">
 
-   <!-- CLOCK OVERLAY -->
+  <!-- CLOCK OVERLAY -->
   <div id="clock-screen">
     <h1 id="clock-time">00:00</h1>
   </div>
 
+  <!-- TOP BAR (MISSING BEFORE — THIS IS CRITICAL) -->
+  <div class="top-bar" id="top-bar">
+
+    <div class="top-left">
+      <span id="top-time">00:00</span>
+    </div>
+
+    <div class="top-center">
+      <span id="speed">0 km/h</span>
+    </div>
+
+    <div class="top-right">
+      <img id="battery-icon"
+           src="assets/icons/Battery charging.svg">
+      <span id="battery">78%</span>
+    </div>
+
+  </div>
 
   <!-- Dynamic Content -->
   <div id="content"></div>
@@ -48,3 +66,6 @@
   </div>
 
 </div>
+
+<script src="js/app.js"></script>
+</body>

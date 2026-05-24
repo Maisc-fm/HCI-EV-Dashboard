@@ -5,15 +5,6 @@ body {
   color: white;
 }
 
-/* Layout */
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: black;
-  color: white;
-}
-
 /* CLOCK (always visible) */
 #clock-screen {
   position: absolute;
@@ -63,6 +54,7 @@ body {
 #clock-screen.hide {
   opacity: 0;
   pointer-events: none;
+  visibility: hidden; /* ADD THIS */
 }
 
 /* INTRO ANIMATION */
@@ -79,46 +71,128 @@ body {
   }
 }
 
-/* Content takes remaining space */
-#content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
+/* ==========================
+   APP LAYOUT
+========================== */
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* BOTTOM BAR (hidden initially) */
+/* ==========================
+   TOP BAR
+========================== */
+
+.top-bar {
+
+  height: 78px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex: 0 0 78px;
+
+  padding: 0 30px;
+
+  background: rgba(20,20,20,.85);
+  backdrop-filter: blur(18px);
+
+  border-bottom:
+    1px solid rgba(255,255,255,.08);
+}
+
+/* hide on dashboard */
+.top-bar.hidden {
+  display: none;
+}
+
+.top-left {
+
+  min-width: 120px;
+
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.top-center {
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  min-width:180px;
+  height:46px;
+
+  border-radius:999px;
+
+  background:
+    rgba(255,255,255,.05);
+
+  border:
+    1px solid rgba(255,255,255,.08);
+
+  font-size:22px;
+  font-weight:600;
+}
+
+.top-right {
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  min-width:120px;
+
+  justify-content:flex-end;
+
+  font-size:18px;
+}
+
+#battery-icon {
+  width:28px;
+  height:28px;
+}
+
+/* ==========================
+   CONTENT
+========================== */
+
+#content {
+
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+
+  padding: 20px;
+}
+
+/* ==========================
+   BOTTOM BAR
+========================== */
+
 .bottom-bar {
   height: 80px;
-  background: #1f1f1f;
+  flex: 0 0 80px;
 
   display: flex;
   justify-content: space-around;
   align-items: center;
 
-  position: relative;
+  background: #181818;
+  border-top: 1px solid rgba(255,255,255,.08);
 
   transform: translateY(100%);
-  opacity: 0;
-
-  z-index: 100; 
-
+  opacity: 1; /* IMPORTANT: keep visible for animation */
 }
 
-/* SHOW STATE */
 .bottom-bar.show {
-  animation: slideUp 0.8s ease forwards;
-}
-
-/* SLIDE ANIMATION */
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  animation: slideUp .8s ease forwards;
 }
 
 /* Buttons */
@@ -159,10 +233,118 @@ body {
   transform: scale(1.2);
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .map-box {
   height: 400px;
   background: #222;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* =========================
+   SPEEDOMETER UPGRADE
+========================= */
+
+.speedometer-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Main gauge container */
+.speed-gauge {
+  width: 280px;
+  height: 280px;
+  position: relative;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle at center,
+    rgba(255,255,255,0.06),
+    rgba(0,0,0,0.8)
+  );
+
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.8),
+    0 0 25px rgba(0,255,180,0.08);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Outer ring glow */
+.gauge-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+
+  border: 2px solid rgba(0,255,180,0.15);
+  box-shadow: 0 0 25px rgba(0,255,180,0.2);
+}
+
+/* Tick marks */
+.ticks {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.ticks span {
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  background: rgba(255,255,255,0.4);
+  top: 10px;
+  left: 50%;
+  transform-origin: 50% 130px;
+  transform: rotate(calc(var(--i) * 18deg));
+}
+
+/* Needle */
+.needle {
+  position: absolute;
+  width: 4px;
+  height: 120px;
+  background: linear-gradient(to top, #00ffb3, #ff3b3b);
+  border-radius: 5px;
+
+  top: 50%;
+  left: 50%;
+
+  transform-origin: bottom center;
+  transform: translate(-50%, -100%) rotate(45deg);
+
+  box-shadow: 0 0 15px rgba(0,255,180,0.4);
+}
+
+/* Center display */
+.speed-display {
+  text-align: center;
+  z-index: 2;
+}
+
+.speed-display .speed-number {
+  font-size: 54px;
+  font-weight: bold;
+  color: white;
+}
+
+.speed-display .speed-unit {
+  font-size: 16px;
+  color: #aaa;
+  letter-spacing: 1px;
 }
