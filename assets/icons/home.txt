@@ -1,1 +1,2 @@
 
+// add icons for home, media, nav and battery here
