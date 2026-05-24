@@ -1,1 +1,5 @@
-
+<h1>Select Destination</h1>
+<input placeholder="Enter destination">
+<br><br>
+<button onclick="loadScreen('map')">Start Navigation</button>
+<button onclick="loadScreen('charging')">Find Charging</button>
