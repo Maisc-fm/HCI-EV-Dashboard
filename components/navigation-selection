@@ -1,5 +1,0 @@
-<h1>Select Destination</h1>
-<input placeholder="Enter destination">
-<br><br>
-<button onclick="loadScreen('navigation')">Start Navigation</button>
-<button onclick="loadScreen('charging-station')">Find Charging</button>
