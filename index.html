@@ -4,26 +4,47 @@
   <meta charset="UTF-8">
   <title>EV Infotainment</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js"></script>
 </head>
 <body>
 
 <div class="app">
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <button onclick="loadScreen('dashboard')">Home</button>
-    <button onclick="loadScreen('media')">Media</button>
-    <button onclick="loadScreen('youtube-music')">YouTube</button>
-    <button onclick="loadScreen('climate')">Climate</button>
-    <button onclick="loadScreen('battery')">Battery</button>
-    <button onclick="loadScreen('navigation')">Navigation</button>
+   <!-- CLOCK OVERLAY -->
+  <div id="clock-screen">
+    <h1 id="clock-time">00:00</h1>
   </div>
+
 
   <!-- Dynamic Content -->
   <div id="content"></div>
 
-</div>
+  <!-- Bottom Navigation -->
+  <div class="bottom-bar">
+    <button onclick="loadScreen('dashboard')">
+      <img src="assets/icons/home-03.svg">
+      <span>Home</span>
+    </button>
 
-<script src="js/app.js"></script>
-</body>
-</html>
+    <button onclick="loadScreen('media')">
+      <img src="assets/icons/Song.svg">
+      <span>Media</span>
+    </button>
+
+    <button onclick="loadScreen('climate')">
+      <img src="assets/icons/Temperature.svg">
+      <span>Climate</span>
+    </button>
+
+    <button onclick="loadScreen('battery')">
+      <img src="assets/icons/Battery charging.svg">
+      <span>Battery</span>
+    </button>
+
+    <button onclick="loadScreen('navigation')">
+      <img src="assets/icons/automobiles_car.svg">
+      <span>Nav</span>
+    </button>
+  </div>
+
+</div>

@@ -7,34 +7,149 @@ body {
 
 .app {
   display: flex;
+  flex-direction: column;
   height: 100vh;
 }
 
-.sidebar {
-  width: 200px;
-  background: #1f1f1f;
-  padding: 10px;
-}
-
-.sidebar button {
-  width: 100%;
-  margin: 5px 0;
-  padding: 10px;
-  background: #333;
+/* Layout */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: black;
   color: white;
-  border: none;
-  cursor: pointer;
 }
 
-.sidebar button:hover {
-  background: #555;
+/* CLOCK (always visible) */
+#clock-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 100;
 }
 
+/* CLOCK TEXT */
+#clock-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 200;
+
+  /* fade out automatically (we will remove via JS instead) */
+  transition: opacity 0.6s ease;
+}
+
+#clock-time {
+  font-size: 120px;
+  font-weight: bold;
+  letter-spacing: 6px;
+
+  animation: introPop 1.2s ease-out;
+
+  text-shadow: 0 0 20px rgba(0, 200, 255, 0.4);
+}
+
+#clock-screen.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* INTRO ANIMATION */
+@keyframes introPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Content takes remaining space */
 #content {
   flex: 1;
   padding: 20px;
+  overflow-y: auto;
 }
 
+/* BOTTOM BAR (hidden initially) */
+.bottom-bar {
+  height: 80px;
+  background: #1f1f1f;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  position: relative;
+
+  transform: translateY(100%);
+  opacity: 0;
+
+  z-index: 100; /* IMPORTANT FIX */
+
+}
+
+/* SHOW STATE */
+.bottom-bar.show {
+  animation: slideUp 0.8s ease forwards;
+}
+
+/* SLIDE ANIMATION */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Buttons */
+.bottom-bar button {
+  background: none;
+  border: none;
+  color: white;
+  display: flex;
+  flex-direction: column; /* icon above text */
+  align-items: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Icons */
+.bottom-bar img {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 5px;
+}
+
+/* Hover effect */
+.bottom-bar button:hover {
+  color: #00d4ff;
+}
 .map-box {
   height: 400px;
   background: #222;
