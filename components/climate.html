@@ -1,4 +1,545 @@
-<h1>Climate</h1>
-<p>Temp: <span id="temp">24</span>°C</p>
-<button onclick="changeTemp(1)">+</button>
-<button onclick="changeTemp(-1)">-</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EV Dashboard – Climate</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0d1117;
+    --bg-panel: #161c27;
+    --bg-card: #1e2738;
+    --bg-section: #1a2235;
+    --accent: #00c6ff;
+    --accent-green: #39ff8a;
+    --purple: #6c5ce7;
+    --purple-light: #a29bfe;
+    --purple-btn: #5f4ee8;
+    --text-primary: #e8edf5;
+    --text-secondary: #7b8fa8;
+    --border: rgba(0,198,255,0.15);
+    --border-subtle: rgba(255,255,255,0.07);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .screen {
+    width: 1024px;
+    height: 640px;
+    background: var(--bg-panel);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 120px rgba(0,198,255,0.06);
+    position: relative;
+  }
+
+  /* ── STATUS BAR ─────────────────────────────── */
+  .statusbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px; background: #0d1117;
+    border-bottom: 1px solid var(--border); height: 50px; flex-shrink: 0;
+  }
+  .status-page { font-size: 14px; font-weight: 500; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; }
+  .status-time { font-family: 'Orbitron', monospace; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .status-gear { font-family: 'Orbitron', monospace; font-size: 18px; font-weight: 900; color: var(--accent-green); text-shadow: 0 0 12px rgba(57,255,138,0.6); }
+  .status-speed { display: flex; align-items: baseline; gap: 3px; font-family: 'Orbitron', monospace; }
+  .speed-val { font-size: 28px; font-weight: 900; }
+  .speed-unit { font-size: 11px; color: var(--text-secondary); }
+  .status-right { display: flex; align-items: center; gap: 18px; }
+  .battery-wrap { display: flex; align-items: center; gap: 8px; }
+  .battery-pct { font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; color: var(--accent-green); }
+  .battery-bar { width: 38px; height: 14px; border: 2px solid var(--accent-green); border-radius: 3px; position: relative; display: flex; align-items: center; padding: 2px; }
+  .battery-bar::after { content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 3px; height: 6px; background: var(--accent-green); border-radius: 0 2px 2px 0; }
+  .battery-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #39ff8a, #00c6ff); border-radius: 1px; }
+  .range-val { font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; }
+
+  /* ── MAIN ────────────────────────────────────── */
+  .main {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 16px 20px; gap: 12px; overflow: hidden;
+  }
+
+  /* ── CLIMATE CONTROL CARD ───────────────────── */
+  .climate-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+  }
+
+  .climate-header {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .climate-title { font-size: 20px; font-weight: 700; color: #fff; }
+  .back-btn {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--text-secondary); font-size: 14px; font-weight: 500;
+    cursor: pointer; padding: 6px 12px; border-radius: 8px;
+    transition: all 0.18s; border: none; background: none;
+  }
+  .back-btn:hover { color: #fff; background: rgba(255,255,255,0.07); }
+  .back-btn:active { transform: scale(0.94); }
+  .back-btn svg { width: 16px; height: 16px; }
+
+  /* Temp section */
+  .temp-section { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .temp-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px; }
+  .temp-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 38px; font-weight: 900; color: #fff;
+    transition: all 0.2s ease;
+  }
+
+  /* Slider */
+  .slider-wrap {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+  }
+  .slider-limit { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+  .slider-minus, .slider-plus {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    background: none; color: #ccc; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 300;
+    transition: all 0.18s; flex-shrink: 0; line-height: 1;
+  }
+  .slider-minus:hover, .slider-plus:hover { border-color: var(--purple-light); color: #fff; background: rgba(108,92,231,0.2); }
+  .slider-minus:active, .slider-plus:active { transform: scale(0.88); }
+
+  .temp-slider {
+    -webkit-appearance: none; appearance: none;
+    flex: 1; height: 6px; border-radius: 10px; cursor: pointer;
+    outline: none;
+    background: linear-gradient(90deg, var(--purple) var(--pct, 44%), rgba(255,255,255,0.12) var(--pct, 44%));
+    transition: background 0.1s;
+  }
+  .temp-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; cursor: pointer;
+    box-shadow: 0 0 8px rgba(108,92,231,0.6);
+    transition: transform 0.15s;
+  }
+  .temp-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  .temp-slider::-moz-range-thumb {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; cursor: pointer; border: none;
+    box-shadow: 0 0 8px rgba(108,92,231,0.6);
+  }
+
+  /* Mode buttons */
+  .mode-row { display: flex; gap: 16px; }
+  .mode-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; padding: 18px 12px;
+    background: var(--purple-btn);
+    border: 2px solid transparent;
+    border-radius: 14px; cursor: pointer;
+    transition: all 0.2s ease; user-select: none;
+    position: relative; overflow: hidden;
+  }
+  .mode-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    border-radius: 12px;
+  }
+  .mode-btn:hover { background: #7c6ef0; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,92,231,0.4); }
+  .mode-btn:active { transform: scale(0.95); }
+  .mode-btn.off { background: #2a3448; border-color: var(--border-subtle); }
+  .mode-btn.off:hover { background: #333f58; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+  .mode-btn svg { width: 28px; height: 28px; color: #fff; }
+  .mode-btn-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 1px; text-transform: uppercase; }
+  .mode-btn-status { font-size: 13px; font-weight: 600; color: #fff; }
+  .mode-btn.off .mode-btn-label { color: rgba(255,255,255,0.5); }
+  .mode-btn.off .mode-btn-status { color: var(--text-secondary); }
+
+  /* ── FAN SPEED ──────────────────────────────── */
+  .fan-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .fan-header { display: flex; align-items: center; gap: 10px; }
+  .fan-header svg { width: 20px; height: 20px; color: var(--text-secondary); }
+  .fan-header-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+
+  .fan-controls { display: flex; align-items: center; gap: 10px; }
+  .fan-limit { font-size: 12px; color: var(--text-secondary); min-width: 28px; }
+  .fan-limit.right { text-align: right; }
+
+  .fan-steps { display: flex; gap: 8px; flex: 1; align-items: center; justify-content: center; }
+  .fan-step {
+    flex: 1; height: 46px; max-width: 80px;
+    background: #2a3448; border-radius: 10px;
+    cursor: pointer; transition: all 0.18s ease;
+    border: 2px solid transparent;
+    position: relative;
+  }
+  .fan-step:hover { background: #364060; border-color: var(--purple-light); }
+  .fan-step:active { transform: scale(0.93); }
+  .fan-step.active { background: #5c6bc0; border-color: var(--purple-light); box-shadow: 0 0 14px rgba(108,92,231,0.4); }
+
+  /* ── DEFOG / VENTS ──────────────────────────── */
+  .vent-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .defog-section { display: flex; flex-direction: column; gap: 2px; min-width: 100px; }
+  .defog-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .defog-status { font-size: 11px; color: var(--text-secondary); }
+
+  .vent-divider { width: 1px; height: 40px; background: var(--border-subtle); margin: 0 4px; }
+
+  .vent-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 10px 18px;
+    background: #2a3448; border-radius: 10px;
+    cursor: pointer; transition: all 0.18s ease;
+    border: 2px solid transparent; flex: 1;
+    user-select: none;
+  }
+  .vent-btn:hover { background: #364060; border-color: rgba(255,255,255,0.15); }
+  .vent-btn:active { transform: scale(0.94); }
+  .vent-btn.active { background: #3d4f7c; border-color: var(--accent); }
+  .vent-btn-label { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .vent-btn-sub { font-size: 11px; color: var(--text-secondary); }
+
+  .power-btn {
+    margin-left: auto;
+    font-family: 'Orbitron', monospace;
+    font-size: 22px; font-weight: 900;
+    color: #fff; cursor: pointer;
+    padding: 10px 20px; border-radius: 12px;
+    background: #2a3448; border: 2px solid var(--border-subtle);
+    transition: all 0.2s ease; white-space: nowrap;
+  }
+  .power-btn:hover { background: #c0392b; border-color: #e74c3c; box-shadow: 0 0 20px rgba(231,76,60,0.4); }
+  .power-btn.on { background: #27ae60; border-color: #2ecc71; box-shadow: 0 0 16px rgba(46,204,113,0.35); }
+  .power-btn.on:hover { background: #c0392b; border-color: #e74c3c; }
+  .power-btn:active { transform: scale(0.93); }
+
+  /* ── NAV BAR ─────────────────────────────────── */
+  .navbar {
+    display: flex; background: #0d1117;
+    border-top: 1px solid var(--border); height: 62px; flex-shrink: 0;
+  }
+  .nav-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    cursor: pointer; border: none; background: none; color: var(--text-secondary);
+    transition: all 0.18s ease; position: relative; user-select: none;
+  }
+  .nav-btn::before { content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 2px; background: transparent; border-radius: 0 0 4px 4px; transition: background 0.2s; }
+  .nav-btn:hover { color: #4fc3f7; background: rgba(0,198,255,0.04); }
+  .nav-btn:hover::before { background: #4fc3f7; }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn.active::before { background: var(--accent); }
+  .nav-btn:active { transform: scale(0.93); }
+  .nav-btn svg { width: 24px; height: 24px; }
+  .nav-label { font-size: 11px; font-weight: 500; letter-spacing: 0.5px; }
+
+  /* ── TOAST ─────────────────────────────────── */
+  .toast {
+    position: absolute; top: 58px; left: 50%; transform: translateX(-50%) translateY(-10px);
+    background: rgba(108,92,231,0.2); border: 1px solid var(--purple-light);
+    backdrop-filter: blur(10px); border-radius: 10px; padding: 9px 18px;
+    font-size: 12.5px; font-weight: 600; color: var(--purple-light);
+    white-space: nowrap; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s; z-index: 99;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <div class="toast" id="toast"></div>
+
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <span class="status-page">Climate</span>
+    <div style="display:flex;align-items:center;gap:28px;">
+      <span class="status-time" id="clock">10:30 AM</span>
+      <span class="status-gear">D</span>
+    </div>
+    <div class="status-speed">
+      <span class="speed-val">80</span>
+      <span class="speed-unit">Km/h</span>
+    </div>
+    <div class="status-right">
+      <div class="battery-wrap">
+        <span class="battery-pct">100%</span>
+        <div class="battery-bar"><div class="battery-fill"></div></div>
+      </div>
+      <span class="range-val">250 Km</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- CLIMATE CONTROL CARD -->
+    <div class="climate-card">
+      <div class="climate-header">
+        <span class="climate-title">Climate Control</span>
+        <button class="back-btn" onclick="showToast('Going back…')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+      </div>
+
+      <!-- Temperature -->
+      <div class="temp-section">
+        <div class="temp-label">Cabin Temperature</div>
+        <div class="temp-display" id="tempDisplay">22°C</div>
+        <div class="slider-wrap">
+          <button class="slider-minus" onclick="changeTemp(-1)">−</button>
+          <span class="slider-limit">16°C</span>
+          <input type="range" class="temp-slider" id="tempSlider" min="16" max="30" value="22" oninput="onSlide(this)">
+          <span class="slider-limit">30°C</span>
+          <button class="slider-plus" onclick="changeTemp(1)">+</button>
+        </div>
+      </div>
+
+      <!-- Mode Buttons -->
+      <div class="mode-row">
+        <div class="mode-btn" id="autoBtn" onclick="toggleMode('autoBtn','AUTO MODE')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+          </svg>
+          <span class="mode-btn-label">AUTO MODE</span>
+          <span class="mode-btn-status" id="autoStatus">On</span>
+        </div>
+        <div class="mode-btn" id="acBtn" onclick="toggleMode('acBtn','A/C')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <span class="mode-btn-label">A/C</span>
+          <span class="mode-btn-status" id="acStatus">On</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAN SPEED CARD -->
+    <div class="fan-card">
+      <div class="fan-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a5 5 0 0 1 5 5c0 2.76-2.24 5-5 5a5 5 0 0 1 0-10z" opacity="0.5"/>
+          <path d="M12 12a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5z" opacity="0.5"/>
+          <path d="M2 12a5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5A5 5 0 0 1 2 12z" opacity="0.5"/>
+          <path d="M22 12a5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5z" opacity="0.5"/>
+          <circle cx="12" cy="12" r="2" fill="currentColor"/>
+        </svg>
+        <span class="fan-header-label">Fan Speed</span>
+      </div>
+      <div class="fan-controls">
+        <span class="fan-limit">Low</span>
+        <div class="fan-steps" id="fanSteps">
+          <div class="fan-step active" onclick="setFan(0)"></div>
+          <div class="fan-step" onclick="setFan(1)"></div>
+          <div class="fan-step" onclick="setFan(2)"></div>
+          <div class="fan-step" onclick="setFan(3)"></div>
+          <div class="fan-step" onclick="setFan(4)"></div>
+        </div>
+        <span class="fan-limit right">High</span>
+      </div>
+    </div>
+
+    <!-- DEFOG / VENTS CARD -->
+    <div class="vent-card">
+      <!-- Defog -->
+      <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="toggleDefog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="24" height="24" style="color:var(--text-secondary)">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+        </svg>
+        <div class="defog-section">
+          <div class="defog-title">Defog/Defrost</div>
+          <div class="defog-status" id="defogStatus">Inactive</div>
+        </div>
+      </div>
+
+      <div class="vent-divider"></div>
+
+      <!-- Vents -->
+      <div class="vent-btn" id="frontVent" onclick="toggleVent('frontVent','Front Vents')">
+        <span class="vent-btn-label">Front</span>
+        <span class="vent-btn-sub">Vents</span>
+      </div>
+      <div class="vent-btn" id="rearVent" onclick="toggleVent('rearVent','Rear Vents')">
+        <span class="vent-btn-label">Rear</span>
+        <span class="vent-btn-sub">Vents</span>
+      </div>
+      <div class="vent-btn" id="recircVent" onclick="toggleVent('recircVent','Recirculate Air')">
+        <span class="vent-btn-label">Recirculate</span>
+        <span class="vent-btn-sub">Air</span>
+      </div>
+
+      <div class="vent-divider"></div>
+
+      <button class="power-btn" id="powerBtn" onclick="togglePower()">OFF</button>
+    </div>
+
+  </div>
+
+  <!-- NAV BAR -->
+  <nav class="navbar">
+    <button class="nav-btn" onclick="navTo(this,'Home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" onclick="navTo(this,'Map')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="4"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+      <span class="nav-label">Map</span>
+    </button>
+    <button class="nav-btn active" onclick="navTo(this,'Climate')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+      <span class="nav-label">Climate</span>
+    </button>
+    <button class="nav-btn" onclick="navTo(this,'Phone')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.8-1.8a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span class="nav-label">Phone</span>
+    </button>
+    <button class="nav-btn" onclick="navTo(this,'Car')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="11" width="22" height="9" rx="2"/><path d="M5 11L7.5 5h9L19 11"/><circle cx="7" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>
+      <span class="nav-label">Car</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+  // ── CLOCK ─────────────────────────────────────
+  function updateClock() {
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    document.getElementById('clock').textContent = `${h}:${m.toString().padStart(2,'0')} ${ampm}`;
+  }
+  updateClock(); setInterval(updateClock, 1000);
+
+  // ── TOAST ─────────────────────────────────────
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  // ── TEMPERATURE ───────────────────────────────
+  let temp = 22;
+  const MIN_TEMP = 16, MAX_TEMP = 30;
+
+  function updateTempUI() {
+    document.getElementById('tempDisplay').textContent = temp + '°C';
+    const slider = document.getElementById('tempSlider');
+    slider.value = temp;
+    const pct = ((temp - MIN_TEMP) / (MAX_TEMP - MIN_TEMP)) * 100;
+    slider.style.setProperty('--pct', pct + '%');
+  }
+
+  function changeTemp(delta) {
+    temp = Math.max(MIN_TEMP, Math.min(MAX_TEMP, temp + delta));
+    updateTempUI();
+    showToast(`Cabin temperature: ${temp}°C`);
+  }
+
+  function onSlide(el) {
+    temp = parseInt(el.value);
+    updateTempUI();
+    showToast(`Cabin temperature: ${temp}°C`);
+  }
+
+  updateTempUI();
+
+  // ── MODE BUTTONS ──────────────────────────────
+  const modeState = { autoBtn: true, acBtn: true };
+
+  function toggleMode(id, label) {
+    modeState[id] = !modeState[id];
+    const btn = document.getElementById(id);
+    const statusId = id === 'autoBtn' ? 'autoStatus' : 'acStatus';
+    const status = modeState[id] ? 'On' : 'Off';
+    document.getElementById(statusId).textContent = status;
+    btn.classList.toggle('off', !modeState[id]);
+    showToast(`${label}: ${status}`);
+  }
+
+  // ── FAN SPEED ─────────────────────────────────
+  let fanLevel = 0;
+  const fanLabels = ['Low', 'Medium-Low', 'Medium', 'Medium-High', 'High'];
+
+  function setFan(idx) {
+    fanLevel = idx;
+    document.querySelectorAll('.fan-step').forEach((s, i) => {
+      s.classList.toggle('active', i === idx);
+    });
+    showToast(`Fan speed: ${fanLabels[idx]}`);
+  }
+
+  // ── DEFOG ─────────────────────────────────────
+  let defogOn = false;
+  function toggleDefog() {
+    defogOn = !defogOn;
+    document.getElementById('defogStatus').textContent = defogOn ? 'Active' : 'Inactive';
+    document.getElementById('defogStatus').style.color = defogOn ? '#39ff8a' : '';
+    showToast(`Defog/Defrost: ${defogOn ? 'Active' : 'Inactive'}`);
+  }
+
+  // ── VENTS ─────────────────────────────────────
+  const ventState = {};
+  function toggleVent(id, label) {
+    ventState[id] = !ventState[id];
+    document.getElementById(id).classList.toggle('active', ventState[id]);
+    showToast(`${label}: ${ventState[id] ? 'On' : 'Off'}`);
+  }
+
+  // ── POWER ─────────────────────────────────────
+  let powerOn = false;
+  function togglePower() {
+    powerOn = !powerOn;
+    const btn = document.getElementById('powerBtn');
+    btn.textContent = powerOn ? 'ON' : 'OFF';
+    btn.classList.toggle('on', powerOn);
+    showToast(`Climate: ${powerOn ? 'ON' : 'OFF'}`);
+  }
+
+  // ── NAV ───────────────────────────────────────
+  function navTo(el, page) {
+    document.querySelectorAll('.navbar .nav-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    showToast('Opening ' + page);
+  }
+</script>
+</body>
+</html>
+
