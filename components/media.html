@@ -1,793 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EV Dashboard – Media</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg-deep: #0d1117;
-    --bg-panel: #161c27;
-    --bg-card: #1e2738;
-    --bg-card-hover: #263045;
-    --bg-active: #1a2540;
-    --accent: #00c6ff;
-    --accent2: #4fc3f7;
-    --accent-green: #39ff8a;
-    --accent-yellow: #f7c948;
-    --text-primary: #e8edf5;
-    --text-secondary: #7b8fa8;
-    --text-dim: #4a5568;
-    --border: rgba(0,198,255,0.15);
-    --border-active: rgba(0,198,255,0.4);
-    --shadow: 0 4px 24px rgba(0,0,0,0.5);
-    --glow: 0 0 20px rgba(0,198,255,0.2);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Exo 2', sans-serif;
-    background: var(--bg-deep);
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    overflow: hidden;
-  }
-
-  /* ── SCREEN WRAPPER ─────────────────────────────── */
-  .screen {
-    width: 1024px;
-    height: 640px;
-    background: var(--bg-panel);
-    border-radius: 20px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 120px rgba(0,198,255,0.08);
-    position: relative;
-  }
-
-  /* ── TOP STATUS BAR ─────────────────────────────── */
-  .statusbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 24px;
-    background: #0d1117;
-    border-bottom: 1px solid var(--border);
-    height: 50px;
-    flex-shrink: 0;
-  }
-
-  .status-page { font-family: 'Exo 2', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; }
-
-  .status-time { font-family: 'Orbitron', monospace; font-size: 16px; font-weight: 700; color: var(--text-primary); }
-
-  .status-gear {
-    font-family: 'Orbitron', monospace;
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--accent-green);
-    text-shadow: 0 0 12px rgba(57,255,138,0.6);
-  }
-
-  .status-speed {
-    display: flex;
-    align-items: baseline;
-    gap: 3px;
-    font-family: 'Orbitron', monospace;
-  }
-  .speed-val { font-size: 28px; font-weight: 900; color: var(--text-primary); }
-  .speed-unit { font-size: 11px; color: var(--text-secondary); }
-
-  .status-right { display: flex; align-items: center; gap: 18px; }
-
-  .battery-wrap { display: flex; align-items: center; gap: 8px; }
-  .battery-pct { font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; color: var(--accent-green); }
-  .battery-bar {
-    width: 38px; height: 14px;
-    border: 2px solid var(--accent-green);
-    border-radius: 3px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 2px;
-  }
-  .battery-bar::after {
-    content: '';
-    position: absolute;
-    right: -5px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px; height: 6px;
-    background: var(--accent-green);
-    border-radius: 0 2px 2px 0;
-  }
-  .battery-fill {
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(90deg, #39ff8a, #00c6ff);
-    border-radius: 1px;
-  }
-  .range-val { font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; color: var(--text-primary); }
-
-  /* ── MAIN AREA ─────────────────────────────────── */
-  .main {
-    display: grid;
-    grid-template-columns: 210px 1fr 260px;
-    gap: 14px;
-    padding: 14px;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  /* ── SOURCE PANEL (LEFT) ────────────────────────── */
-  .sources {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .source-btn {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 13px 16px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    user-select: none;
-    position: relative;
-    overflow: hidden;
-  }
-  .source-btn::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: transparent;
-    border-radius: 2px;
-    transition: background 0.2s;
-  }
-  .source-btn:hover { background: var(--bg-card-hover); border-color: var(--border-active); transform: translateX(3px); }
-  .source-btn:hover::before { background: var(--accent); }
-  .source-btn.active { background: var(--bg-active); border-color: var(--border-active); box-shadow: var(--glow); }
-  .source-btn.active::before { background: var(--accent); }
-  .source-btn:active { transform: scale(0.97); }
-
-  .source-icon { width: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .source-icon svg { width: 22px; height: 22px; }
-  .source-label { font-size: 13.5px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.3px; }
-
-  /* ── PLAYER (CENTER) ───────────────────────────── */
-  .player {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 18px 24px;
-    gap: 14px;
-    position: relative;
-    overflow: hidden;
-  }
-  .player::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(0,198,255,0.06) 0%, transparent 60%);
-    pointer-events: none;
-  }
-
-  .album-art {
-    width: 170px;
-    height: 170px;
-    background: #c0c8d8;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    flex-shrink: 0;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    cursor: pointer;
-  }
-  .album-art img { width: 100%; height: 100%; object-fit: contain; }
-  .album-art-spinner {
-    position: absolute;
-    inset: 0;
-    border-radius: 12px;
-    border: 2px solid transparent;
-    border-top-color: var(--accent);
-    animation: spin 3s linear infinite;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .album-art.playing .album-art-spinner { opacity: 1; }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .track-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: 0.5px;
-    text-align: center;
-  }
-
-  /* Progress */
-  .progress-wrap { width: 100%; display: flex; flex-direction: column; gap: 6px; }
-  .progress-bar {
-    width: 100%;
-    height: 5px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
-    cursor: pointer;
-    position: relative;
-  }
-  .progress-fill {
-    height: 100%;
-    width: 5%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    position: relative;
-    transition: width 0.5s linear;
-  }
-  .progress-fill::after {
-    content: '';
-    position: absolute;
-    right: -5px; top: 50%;
-    transform: translateY(-50%);
-    width: 10px; height: 10px;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--accent);
-  }
-  .progress-times { display: flex; justify-content: space-between; }
-  .progress-times span { font-size: 11px; color: var(--text-secondary); font-family: 'Orbitron', monospace; }
-
-  /* Controls */
-  .controls { display: flex; align-items: center; gap: 20px; }
-  .ctrl-btn {
-    background: none; border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    padding: 6px;
-    border-radius: 50%;
-    transition: all 0.18s ease;
-  }
-  .ctrl-btn:hover { color: var(--accent); background: rgba(0,198,255,0.1); transform: scale(1.15); }
-  .ctrl-btn:active { transform: scale(0.92); }
-  .ctrl-btn svg { width: 22px; height: 22px; }
-
-  .ctrl-btn.play-pause {
-    background: linear-gradient(135deg, var(--accent), #0080ff);
-    color: #fff;
-    width: 52px; height: 52px;
-    box-shadow: 0 0 18px rgba(0,198,255,0.5);
-  }
-  .ctrl-btn.play-pause:hover { box-shadow: 0 0 30px rgba(0,198,255,0.8); transform: scale(1.1); }
-  .ctrl-btn.play-pause svg { width: 26px; height: 26px; }
-
-  .ctrl-btn.active-ctrl { color: var(--accent); }
-
-  /* ── QUEUE (RIGHT) ─────────────────────────────── */
-  .queue { display: flex; flex-direction: column; gap: 0; }
-
-  .queue-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    padding-left: 4px;
-  }
-
-  .queue-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 12px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    cursor: pointer;
-    margin-bottom: 8px;
-    transition: all 0.18s ease;
-    position: relative;
-  }
-  .queue-item:hover { background: var(--bg-card-hover); border-color: var(--border-active); transform: translateX(-3px); }
-  .queue-item:active { transform: scale(0.97); }
-  .queue-item.now-playing { border-color: var(--accent); background: var(--bg-active); }
-
-  .queue-thumb {
-    width: 44px; height: 44px;
-    background: #c0c8d8;
-    border-radius: 8px;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .queue-thumb img { width: 100%; height: 100%; object-fit: contain; }
-
-  .queue-info { flex: 1; min-width: 0; }
-  .queue-name { font-size: 12.5px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .queue-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-
-  .queue-chevron { color: var(--text-dim); flex-shrink: 0; }
-  .queue-chevron svg { width: 16px; height: 16px; }
-
-  /* ── NAV BAR (BOTTOM) ─────────────────────────── */
-  .navbar {
-    display: flex;
-    background: #0d1117;
-    border-top: 1px solid var(--border);
-    height: 62px;
-    flex-shrink: 0;
-  }
-
-  .nav-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    cursor: pointer;
-    border: none;
-    background: none;
-    color: var(--text-secondary);
-    transition: all 0.18s ease;
-    position: relative;
-    user-select: none;
-  }
-  .nav-btn::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 20%; right: 20%;
-    height: 2px;
-    background: transparent;
-    border-radius: 0 0 4px 4px;
-    transition: background 0.2s;
-  }
-  .nav-btn:hover { color: var(--accent2); background: rgba(0,198,255,0.04); }
-  .nav-btn:hover::before { background: var(--accent2); }
-  .nav-btn.active { color: var(--accent); }
-  .nav-btn.active::before { background: var(--accent); }
-  .nav-btn:active { transform: scale(0.93); }
-  .nav-btn svg { width: 24px; height: 24px; }
-  .nav-label { font-size: 11px; font-weight: 500; letter-spacing: 0.5px; }
-
-  /* ── MODALS / TOAST ─────────────────────────────── */
-  .toast {
-    position: absolute;
-    top: 62px; left: 50%; transform: translateX(-50%) translateY(-10px);
-    background: rgba(0,198,255,0.15);
-    border: 1px solid var(--accent);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--accent);
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s, transform 0.3s;
-    z-index: 99;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* ── SCAN LINES OVERLAY ─────────────────────────── */
-  .scanlines {
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-    pointer-events: none;
-    z-index: 10;
-    border-radius: 20px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="screen" id="screen">
-  <div class="scanlines"></div>
+<div class="media-container">
 
-  <!-- Toast notification -->
-  <div class="toast" id="toast">Switching source…</div>
-
-  <!-- STATUS BAR -->
-  <div class="statusbar">
-    <span class="status-page">Media</span>
-    <div style="display:flex;align-items:center;gap:28px;">
-      <span class="status-time" id="clock">10:30 AM</span>
-      <span class="status-gear">D</span>
-    </div>
-    <div class="status-speed">
-      <span class="speed-val" id="speedVal">80</span>
-      <span class="speed-unit">Km/h</span>
-    </div>
-    <div class="status-right">
-      <div class="battery-wrap">
-        <span class="battery-pct">100%</span>
-        <div class="battery-bar"><div class="battery-fill"></div></div>
-      </div>
-      <span class="range-val">250 Km</span>
-    </div>
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div class="main">
-
-    <!-- LEFT: SOURCES -->
-    <div class="sources">
-
-      <div class="source-btn" onclick="selectSource(this,'Bluetooth')">
-        <div class="source-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#00c6ff">
-            <polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/>
-          </svg>
-        </div>
-        <span class="source-label">Bluetooth</span>
-      </div>
-
-      <div class="source-btn" onclick="selectSource(this,'USB')">
-        <div class="source-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="color:#a0b0c8">
-            <path d="M12 2v8M8 6l4-4 4 4M6 14h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2"/>
-            <circle cx="9" cy="18" r="1.5" fill="currentColor"/>
-            <circle cx="15" cy="18" r="1.5" fill="currentColor"/>
-          </svg>
-        </div>
-        <span class="source-label">USB</span>
-      </div>
-
-      <div class="source-btn" onclick="selectSource(this,'Radio')">
-        <div class="source-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#a0b0c8">
-            <rect x="2" y="10" width="20" height="12" rx="2"/>
-            <line x1="6" y1="14" x2="6" y2="18"/>
-            <circle cx="14" cy="16" r="2"/>
-            <path d="M6 4l6 4M18 4l-6 4"/>
-          </svg>
-        </div>
-        <span class="source-label">Radio</span>
-      </div>
-
-      <div class="source-btn" onclick="selectSource(this,'YouTube Music')">
-        <div class="source-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="color:#ff4444">
-            <rect width="24" height="24" rx="4" fill="#ff4444"/>
-            <polygon points="10,8 16,12 10,16" fill="white"/>
-          </svg>
-        </div>
-        <span class="source-label">Youtube Music</span>
-      </div>
-
-      <div class="source-btn active" onclick="selectSource(this,'Spotify')">
-        <div class="source-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="color:#1db954">
-            <circle cx="12" cy="12" r="12" fill="#1db954"/>
-            <path d="M7 14.5c2.5-1 5.5-1.2 8 0" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path d="M6.5 11.5c3-1.2 6.5-1.2 10 0" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path d="M6 8.5c3.5-1.2 7.5-1.2 12 0" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-          </svg>
-        </div>
-        <span class="source-label">Spotify</span>
-      </div>
-
-    </div>
-
-    <!-- CENTER: PLAYER -->
-    <div class="player">
-
-      <div class="album-art playing" id="albumArt" onclick="showToast('Album art tapped')">
-        <!-- UNIMAS logo placeholder – crisp SVG badge -->
-        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" width="160" height="160">
-          <rect width="160" height="160" fill="white"/>
-          <!-- Badge background shapes -->
-          <ellipse cx="80" cy="78" rx="56" ry="58" fill="#c0392b"/>
-          <!-- Blue teardrop -->
-          <path d="M80 28 C55 45 40 62 40 82 C40 108 58 122 80 122 C102 122 120 108 120 82 C120 62 105 45 80 28Z" fill="#1a3a6e"/>
-          <!-- Red heart/shield overlay -->
-          <path d="M80 42 C62 55 54 68 54 84 C54 102 65 114 80 118 C95 114 106 102 106 84 C106 68 98 55 80 42Z" fill="#c0392b"/>
-          <!-- Tree -->
-          <ellipse cx="80" cy="70" rx="14" ry="16" fill="#f7c948"/>
-          <rect x="77" y="84" width="6" height="14" fill="#7a5c2e"/>
-          <!-- UNIMAS text -->
-          <text x="80" y="136" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="11" font-weight="900" fill="#c0392b" letter-spacing="1">UNIMAS</text>
-          <!-- Outer ring text -->
-          <path id="arc" d="M 32 80 A 48 48 0 0 1 128 80" fill="none"/>
-          <text font-family="Arial, sans-serif" font-size="8" fill="#1a3a6e" font-weight="bold">
-            <textPath href="#arc" startOffset="10%">UNIVERSITI MALAYSIA SARAWAK</textPath>
-          </text>
-        </svg>
-        <div class="album-art-spinner"></div>
-      </div>
-
-      <div class="track-title">UNIMAS Gemilang</div>
-
-      <div class="progress-wrap">
-        <div class="progress-bar" onclick="seekTrack(event)" id="progressBar">
-          <div class="progress-fill" id="progressFill"></div>
-        </div>
-        <div class="progress-times">
-          <span id="currentTime">0:10</span>
-          <span>3:15</span>
-        </div>
-      </div>
-
-      <div class="controls">
-        <button class="ctrl-btn active-ctrl" id="repeatBtn" onclick="toggleRepeat()" title="Repeat">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-          </svg>
+    <!-- LEFT PANEL -->
+    <div class="media-sidebar">
+        <button class="media-btn">
+            Bluetooth
         </button>
-        <button class="ctrl-btn" onclick="prevTrack()" title="Previous">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="19,20 9,12 19,4"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-          </svg>
+
+        <button class="media-btn">
+            USB
         </button>
-        <button class="ctrl-btn play-pause" id="playBtn" onclick="togglePlay()" title="Play/Pause">
-          <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="6,4 20,12 6,20"/>
-          </svg>
+
+        <button class="media-btn">
+            Radio
         </button>
-        <button class="ctrl-btn" onclick="nextTrack()" title="Next">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="5,4 15,12 5,20"/><line x1="19" y1="4" x2="19" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-          </svg>
+
+        <!-- LINK TO YOUTUBE MUSIC -->
+        <a href="youtube-music.html" class="media-btn active">
+            Youtube Music
+        </a>
+
+        <button class="media-btn">
+            Spotify
         </button>
-        <button class="ctrl-btn" id="shuffleBtn" onclick="toggleShuffle()" title="Shuffle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>
-          </svg>
-        </button>
-      </div>
+    </div>
+
+
+    <!-- CENTER PLAYER -->
+    <div class="media-player">
+
+        <div class="album-art">
+            <img src="assets/unimas.png" alt="Album">
+        </div>
+
+        <h2>UNIMAS Gemilang</h2>
+
+        <div class="progress-section">
+            <span>0:10</span>
+
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+
+            <span>3:15</span>
+        </div>
+
+        <div class="controls">
+            <button>⟲</button>
+            <button>⏮</button>
+            <button class="play-btn">▶</button>
+            <button>⏭</button>
+            <button>🔀</button>
+        </div>
 
     </div>
 
-    <!-- RIGHT: QUEUE -->
-    <div class="queue">
-      <div class="queue-title">Up Next</div>
 
-      <div class="queue-item now-playing" onclick="playQueueItem(this,0)">
-        <div class="queue-thumb">
-          <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" width="44" height="44">
-            <rect width="44" height="44" fill="white"/><ellipse cx="22" cy="21" rx="15" ry="16" fill="#c0392b"/>
-            <path d="M22 8 C15 13 11 17 11 23 C11 30 16 34 22 34 C28 34 33 30 33 23 C33 17 29 13 22 8Z" fill="#1a3a6e"/>
-            <path d="M22 12 C17 16 15 19 15 24 C15 29 18 32 22 33 C26 32 29 29 29 24 C29 19 27 16 22 12Z" fill="#c0392b"/>
-            <ellipse cx="22" cy="20" rx="5" ry="5" fill="#f7c948"/>
-            <rect x="20.5" y="25" width="3" height="5" fill="#7a5c2e"/>
-          </svg>
-        </div>
-        <div class="queue-info">
-          <div class="queue-name">UNIMAS Gemilang</div>
-          <div class="queue-sub">Now Playing</div>
-        </div>
-        <div class="queue-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
+    <!-- RIGHT PANEL -->
+    <div class="up-next">
 
-      <div class="queue-item" onclick="playQueueItem(this,1)">
-        <div class="queue-thumb">
-          <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" width="44" height="44">
-            <rect width="44" height="44" fill="white"/><ellipse cx="22" cy="21" rx="15" ry="16" fill="#c0392b"/>
-            <path d="M22 8 C15 13 11 17 11 23 C11 30 16 34 22 34 C28 34 33 30 33 23 C33 17 29 13 22 8Z" fill="#1a3a6e"/>
-            <path d="M22 12 C17 16 15 19 15 24 C15 29 18 32 22 33 C26 32 29 29 29 24 C29 19 27 16 22 12Z" fill="#c0392b"/>
-            <ellipse cx="22" cy="20" rx="5" ry="5" fill="#f7c948"/>
-            <rect x="20.5" y="25" width="3" height="5" fill="#7a5c2e"/>
-          </svg>
-        </div>
-        <div class="queue-info">
-          <div class="queue-name">UNIMAS Gemilang</div>
-          <div class="queue-sub">3:15</div>
-        </div>
-        <div class="queue-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
+        <h3>Up Next</h3>
 
-      <div class="queue-item" onclick="playQueueItem(this,2)">
-        <div class="queue-thumb">
-          <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" width="44" height="44">
-            <rect width="44" height="44" fill="white"/><ellipse cx="22" cy="21" rx="15" ry="16" fill="#c0392b"/>
-            <path d="M22 8 C15 13 11 17 11 23 C11 30 16 34 22 34 C28 34 33 30 33 23 C33 17 29 13 22 8Z" fill="#1a3a6e"/>
-            <path d="M22 12 C17 16 15 19 15 24 C15 29 18 32 22 33 C26 32 29 29 29 24 C29 19 27 16 22 12Z" fill="#c0392b"/>
-            <ellipse cx="22" cy="20" rx="5" ry="5" fill="#f7c948"/>
-            <rect x="20.5" y="25" width="3" height="5" fill="#7a5c2e"/>
-          </svg>
+        <div class="song-card">
+            <img src="assets/unimas.png">
+            <span>UNIMAS Gemilang</span>
         </div>
-        <div class="queue-info">
-          <div class="queue-name">UNIMAS Gemilang</div>
-          <div class="queue-sub">3:15</div>
-        </div>
-        <div class="queue-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
 
-      <div class="queue-item" onclick="playQueueItem(this,3)">
-        <div class="queue-thumb">
-          <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" width="44" height="44">
-            <rect width="44" height="44" fill="white"/><ellipse cx="22" cy="21" rx="15" ry="16" fill="#c0392b"/>
-            <path d="M22 8 C15 13 11 17 11 23 C11 30 16 34 22 34 C28 34 33 30 33 23 C33 17 29 13 22 8Z" fill="#1a3a6e"/>
-            <path d="M22 12 C17 16 15 19 15 24 C15 29 18 32 22 33 C26 32 29 29 29 24 C29 19 27 16 22 12Z" fill="#c0392b"/>
-            <ellipse cx="22" cy="20" rx="5" ry="5" fill="#f7c948"/>
-            <rect x="20.5" y="25" width="3" height="5" fill="#7a5c2e"/>
-          </svg>
+        <div class="song-card">
+            <img src="assets/unimas.png">
+            <span>UNIMAS Gemilang</span>
         </div>
-        <div class="queue-info">
-          <div class="queue-name">UNIMAS Gemilang</div>
-          <div class="queue-sub">3:15</div>
+
+        <div class="song-card">
+            <img src="assets/unimas.png">
+            <span>UNIMAS Gemilang</span>
         </div>
-        <div class="queue-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
+
+        <div class="song-card">
+            <img src="assets/unimas.png">
+            <span>UNIMAS Gemilang</span>
+        </div>
+
     </div>
-
-  </div>
-
-  <!-- NAV BAR -->
-  <nav class="navbar">
-    <button class="nav-btn" onclick="navTo(this,'Home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
-        <polyline points="9 21 9 12 15 12 15 21"/>
-      </svg>
-      <span class="nav-label">Home</span>
-    </button>
-    <button class="nav-btn" onclick="navTo(this,'Map')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="10" r="4"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-      </svg>
-      <span class="nav-label">Map</span>
-    </button>
-    <button class="nav-btn active" onclick="navTo(this,'Climate')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
-      </svg>
-      <span class="nav-label">Climate</span>
-    </button>
-    <button class="nav-btn" onclick="navTo(this,'Phone')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.8-1.8a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-      </svg>
-      <span class="nav-label">Phone</span>
-    </button>
-    <button class="nav-btn" onclick="navTo(this,'Car')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="1" y="11" width="22" height="9" rx="2"/>
-        <path d="M5 11L7.5 5h9L19 11"/>
-        <circle cx="7" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/>
-      </svg>
-      <span class="nav-label">Car</span>
-    </button>
-  </nav>
 
 </div>
 
-<script>
-  // ── CLOCK ────────────────────────────────────────
-  function updateClock() {
-    const now = new Date();
-    let h = now.getHours(), m = now.getMinutes();
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    h = h % 12 || 12;
-    document.getElementById('clock').textContent = `${h}:${m.toString().padStart(2,'0')} ${ampm}`;
-  }
-  updateClock();
-  setInterval(updateClock, 1000);
-
-  // ── TOAST ────────────────────────────────────────
-  let toastTimer;
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
-  }
-
-  // ── SOURCE SELECT ─────────────────────────────────
-  function selectSource(el, name) {
-    document.querySelectorAll('.source-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    showToast(`Switched to ${name}`);
-  }
-
-  // ── PLAYBACK ─────────────────────────────────────
-  let isPlaying = true;
-  let progress = 10; // seconds
-  const totalSec = 195; // 3:15
-  let playInterval;
-
-  function updateProgress() {
-    const pct = (progress / totalSec) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
-    const m = Math.floor(progress / 60);
-    const s = progress % 60;
-    document.getElementById('currentTime').textContent = `${m}:${s.toString().padStart(2,'0')}`;
-  }
-
-  function startProgress() {
-    playInterval = setInterval(() => {
-      if (progress < totalSec) { progress++; updateProgress(); }
-      else { progress = 0; }
-    }, 1000);
-  }
-  startProgress();
-
-  function togglePlay() {
-    isPlaying = !isPlaying;
-    const icon = document.getElementById('playIcon');
-    const art = document.getElementById('albumArt');
-    if (isPlaying) {
-      icon.innerHTML = '<polygon points="6,4 20,12 6,20"/>';
-      art.classList.add('playing');
-      startProgress();
-    } else {
-      icon.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
-      art.classList.remove('playing');
-      clearInterval(playInterval);
-    }
-  }
-
-  function seekTrack(e) {
-    const bar = document.getElementById('progressBar');
-    const rect = bar.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    progress = Math.floor(pct * totalSec);
-    updateProgress();
-    showToast('Seeked');
-  }
-
-  let repeatOn = true;
-  function toggleRepeat() {
-    repeatOn = !repeatOn;
-    const btn = document.getElementById('repeatBtn');
-    btn.style.color = repeatOn ? 'var(--accent)' : 'var(--text-secondary)';
-    showToast(repeatOn ? 'Repeat On' : 'Repeat Off');
-  }
-
-  let shuffleOn = false;
-  function toggleShuffle() {
-    shuffleOn = !shuffleOn;
-    const btn = document.getElementById('shuffleBtn');
-    btn.style.color = shuffleOn ? 'var(--accent)' : 'var(--text-secondary)';
-    showToast(shuffleOn ? 'Shuffle On' : 'Shuffle Off');
-  }
-
-  function prevTrack() { progress = 0; updateProgress(); showToast('Previous Track'); }
-  function nextTrack() { progress = 0; updateProgress(); showToast('Next Track'); }
-
-  // ── QUEUE ─────────────────────────────────────────
-  function playQueueItem(el, idx) {
-    document.querySelectorAll('.queue-item').forEach((q,i) => {
-      q.classList.toggle('now-playing', i === idx);
-      q.querySelector('.queue-sub').textContent = i === idx ? 'Now Playing' : '3:15';
-    });
-    progress = 0;
-    updateProgress();
-    showToast(`Playing track ${idx+1}`);
-  }
-
-  // ── NAV ───────────────────────────────────────────
-  function navTo(el, page) {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    showToast(`Opening ${page}`);
-  }
-
-  updateProgress();
-</script>
 </body>
 </html>
-
