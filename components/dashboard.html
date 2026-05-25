@@ -21,20 +21,29 @@ body{
 }
 
 /* Main Dashboard */
-.dashboard{
-    width:100vw;
-    height:100vh;
-    padding:25px;
-    display:flex;
-    flex-direction:column;
+.dashboard {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+.dashboard * {
+  box-sizing: border-box;
 }
 
 /* ===== TOP SECTION ===== */
 .top-section{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    height:35%;
+    display: flex;
+  justify-content: space-between;
+  align-items: center; /* IMPORTANT FIX */
+  height: 42%;        /* more space for gauge */
+  gap: 20px;
+  z-index: 1;
+  position: relative;
 }
 
 /* Shared card style */
@@ -93,11 +102,13 @@ body{
 }
 
 /* ===== SPEEDOMETER ===== */
-.speedometer-card{
-    width:30%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+.speedometer-card {
+  width: 32%;
+  height: 320px;   /* IMPORTANT */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
 }
 
 .speedometer{
@@ -169,9 +180,10 @@ body{
 }
 
 /* ===== MAP ===== */
-.map-section{
-    flex:1;
-    margin-top:20px;
+.map-section {
+  height: 58%;     /* strict control */
+  margin-top: 10px;
+  overflow: hidden;
 }
 
 .map-card{

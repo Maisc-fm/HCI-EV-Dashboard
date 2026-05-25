@@ -1,3 +1,45 @@
-<h1>Battery</h1>
-<p>Charge: 78%</p>
-<p>Status: Discharging</p>
+<div class="battery-screen">
+
+    <!-- MAIN BATTERY STATUS -->
+    <div class="battery-status">
+        <div class="battery-percentage">100%</div>
+
+        <div class="battery-visual">
+            <div class="battery-body">
+                <div class="battery-level" style="width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO CARDS -->
+    <div class="battery-cards">
+
+        <!-- ENERGY USAGE -->
+        <div class="card">
+            <h3>Energy Usage</h3>
+            <div class="card-content">
+                <img src="../assets/energy-graph.png" alt="Energy Graph" class="energy-graph">
+            </div>
+        </div>
+
+        <!-- RANGE -->
+        <div class="card">
+            <h3>Range</h3>
+            <div class="card-content center">
+                <div class="range-value">250 <span>Km</span></div>
+                <div class="range-sub">12.0 h expected</div>
+            </div>
+        </div>
+
+        <!-- CHARGING PORT -->
+        <div class="card">
+            <h3>Charging Port</h3>
+            <div class="card-content center">
+                <div class="lock-icon">🔒</div>
+                <div class="status closed">CLOSED</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

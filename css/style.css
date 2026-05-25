@@ -71,6 +71,11 @@ body {
   }
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 /* ==========================
    APP LAYOUT
 ========================== */
@@ -264,8 +269,8 @@ body {
 
 /* Main gauge container */
 .speed-gauge {
-  width: 280px;
-  height: 280px;
+  width: 240px;
+  height: 240px;
   position: relative;
   border-radius: 50%;
 
@@ -310,7 +315,7 @@ body {
   background: rgba(255,255,255,0.4);
   top: 10px;
   left: 50%;
-  transform-origin: 50% 130px;
+  transform-origin: 50% 110px;
   transform: rotate(calc(var(--i) * 18deg));
 }
 
@@ -347,4 +352,103 @@ body {
   font-size: 16px;
   color: #aaa;
   letter-spacing: 1px;
+}
+
+.battery-screen {
+    padding: 20px;
+    height: calc(100vh - 120px); /* adjust for top + bottom bar */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #13294b;
+}
+
+/* Top battery section */
+.battery-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.battery-percentage {
+    font-size: 64px;
+    color: #4caf50;
+    font-weight: bold;
+}
+
+/* Battery icon */
+.battery-body {
+    width: 140px;
+    height: 70px;
+    border: 4px solid #4caf50;
+    border-radius: 10px;
+    position: relative;
+    padding: 5px;
+}
+
+.battery-body::after {
+    content: '';
+    position: absolute;
+    right: -12px;
+    top: 20px;
+    width: 10px;
+    height: 30px;
+    background: #4caf50;
+    border-radius: 2px;
+}
+
+.battery-level {
+    height: 100%;
+    background: linear-gradient(to top, #2ecc71, #66ff99);
+    border-radius: 5px;
+}
+
+/* Cards */
+.battery-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.card {
+    background: #5a6a80;
+    padding: 20px;
+    border-radius: 8px;
+    color: white;
+}
+
+.card h3 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.card-content.center {
+    text-align: center;
+}
+
+/* Range */
+.range-value {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.range-value span {
+    font-size: 20px;
+}
+
+/* Charging */
+.lock-icon {
+    font-size: 50px;
+}
+
+.status.closed {
+    color: red;
+    font-weight: bold;
+}
+
+/* Energy graph */
+.energy-graph {
+    width: 100%;
+    border-radius: 6px;
 }
