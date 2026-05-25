@@ -1,168 +1,180 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #111;
-  color: white;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
 }
 
-/* Layout */
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: black;
-  color: white;
+body{
+  background:#020817;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
 }
 
-/* CLOCK (always visible) */
-#clock-screen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: black;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 100;
+.screen{
+  width:900px;
+  height:500px;
+  background:#07152e;
+  border-radius:25px;
+  padding:20px;
+  position:relative;
 }
 
-/* CLOCK TEXT */
-#clock-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  background: black;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 200;
-
-  /* fade out automatically (we will remove via JS instead) */
-  transition: opacity 0.6s ease;
+.mobile-screen{
+  width:450px;
+  background:#07152e;
+  padding:20px;
+  border-radius:25px;
 }
 
-#clock-time {
-  font-size: 120px;
-  font-weight: bold;
-  letter-spacing: 6px;
-
-  animation: introPop 1.2s ease-out;
-
-  text-shadow: 0 0 20px rgba(0, 200, 255, 0.4);
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:20px;
 }
 
-#clock-screen.hide {
-  opacity: 0;
-  pointer-events: none;
+.navigation-layout,
+.charging-layout{
+  display:flex;
+  gap:20px;
 }
 
-/* INTRO ANIMATION */
-@keyframes introPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.6);
-    filter: blur(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0);
-  }
+.sidebar{
+  width:220px;
+  background:#081b3f;
+  border-radius:20px;
+  padding:15px;
 }
 
-/* Content takes remaining space */
-#content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
+.menu{
+  background:#102852;
+  padding:15px;
+  border-radius:15px;
+  margin-bottom:15px;
 }
 
-/* BOTTOM BAR (hidden initially) */
-.bottom-bar {
-  height: 80px;
-  background: #1f1f1f;
-
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-
-  position: relative;
-
-  transform: translateY(100%);
-  opacity: 0;
-
-  z-index: 100; 
-
+.map{
+  flex:1;
+  background:#0a1326;
+  border-radius:20px;
+  position:relative;
 }
 
-/* SHOW STATE */
-.bottom-bar.show {
-  animation: slideUp 0.8s ease forwards;
+.route{
+  width:400px;
+  height:5px;
+  background:#00ff88;
+  position:absolute;
+  top:200px;
+  left:100px;
+  transform:rotate(-15deg);
+  border-radius:20px;
 }
 
-/* SLIDE ANIMATION */
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.pin{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  position:absolute;
 }
 
-/* Buttons */
-.bottom-bar button {
-  background: none;
-  border: none;
-  color: white;
-  display: flex;
-  flex-direction: row;   
-  align-items: center;
-  gap: 10px; 
-  font-size: 12px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+.start{
+  background:yellow;
+  left:80px;
+  top:220px;
 }
 
-.bottom-bar button span {
-  font-size: 18px;       /* smaller = more sleek */
-  font-weight: 500;      /* not too bold */
-  letter-spacing: 0.5px; /* modern spacing */
-  margin-top: 2px;
+.end{
+  background:red;
+  right:80px;
+  top:120px;
 }
 
-/* Icons */
-.bottom-bar img {
-  width: 40px;
-  height: 40px;
-  transition: transform 0.2s ease;
+.bottom-nav{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:70px;
+  background:#081b3f;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  border-radius:0 0 25px 25px;
 }
 
-/* Hover effect */
-.bottom-bar button:hover {
-  transform: translateY(-2px);
-  color: #00d4ff;
+.active{
+  color:#00e0ff;
 }
 
-.bottom-bar button:hover img {
-  transform: scale(1.2);
+.destination{
+  background:#102852;
+  padding:18px;
+  border-radius:15px;
+  margin-top:15px;
 }
 
-.map-box {
-  height: 400px;
-  background: #222;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.continue-btn,
+.start-btn{
+  width:100%;
+  padding:16px;
+  border:none;
+  background:#00d9ff;
+  margin-top:20px;
+  border-radius:15px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.charging-list{
+  width:280px;
+}
+
+.station-card{
+  background:#081b3f;
+  padding:20px;
+  border-radius:18px;
+  margin-bottom:15px;
+}
+
+.route-box{
+  background:#081b3f;
+  border-radius:25px;
+  padding:40px;
+  margin-top:30px;
+}
+
+.step{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  font-size:20px;
+}
+
+.dot{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+}
+
+.blue{
+  background:#00e0ff;
+}
+
+.green{
+  background:#00ff88;
+}
+
+.orange{
+  background:orange;
+}
+
+.line{
+  width:2px;
+  height:40px;
+  background:white;
+  margin-left:9px;
 }
