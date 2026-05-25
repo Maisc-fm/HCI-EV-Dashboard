@@ -1,13 +1,6 @@
-const topBar = document.getElementById("top-bar");
-
-function showBottomBar() {
-  document.querySelector(".bottom-bar")?.classList.add("show");
-}
-
-setTimeout(() => {
-  console.log("Bottom bar triggered");
-  showBottomBar();
-}, 1500);
+/* =========================================
+   LOAD SCREEN
+========================================= */
 
 function loadScreen(name) {
 
@@ -23,18 +16,31 @@ function loadScreen(name) {
       const topBar =
         document.getElementById("top-bar");
 
-      // hide top bar only on dashboard
       if (name === "dashboard") {
         topBar.classList.add("hidden");
       } else {
         topBar.classList.remove("hidden");
       }
+
+      initNavigationPage();
     });
 }
 
-/* =========================
+/* =========================================
+   BOTTOM BAR
+========================================= */
+
+function showBottomBar() {
+
+  document
+    .querySelector(".bottom-bar")
+    ?.classList.add("show");
+}
+
+/* =========================================
    CAR SIMULATION
-========================= */
+========================================= */
+
 let speedValue = 0;
 let batteryValue = 78;
 
@@ -46,6 +52,7 @@ function startCarSimulation() {
       document.getElementById("speed");
 
     if (speedEl) {
+
       speedValue =
         Math.floor(Math.random() * 120);
 
@@ -55,13 +62,13 @@ function startCarSimulation() {
 
   }, 2000);
 
-
   setInterval(() => {
 
     const batteryEl =
       document.getElementById("battery");
 
     if (batteryEl) {
+
       batteryValue -= 0.1;
 
       if (batteryValue < 0) {
@@ -75,9 +82,10 @@ function startCarSimulation() {
   }, 3000);
 }
 
-/* =========================
-   TOP BAR CLOCK
-========================= */
+/* =========================================
+   TOP CLOCK
+========================================= */
+
 function startTopClock() {
 
   function update() {
@@ -85,7 +93,6 @@ function startTopClock() {
     const topTime =
       document.getElementById("top-time");
 
-    // prevents crash
     if (!topTime) return;
 
     const now = new Date();
@@ -101,12 +108,14 @@ function startTopClock() {
   }
 
   update();
+
   setInterval(update, 1000);
 }
 
-/* =========================
-   STARTUP CLOCK SCREEN
-========================= */
+/* =========================================
+   STARTUP CLOCK
+========================================= */
+
 function startClock() {
 
   function updateClock() {
@@ -131,28 +140,19 @@ function startClock() {
       `${h}:${m}:${s}`;
   }
 
-  // run instantly
   updateClock();
 
-  // keep updating
   setInterval(updateClock, 1000);
 }
 
-/* =========================
-   BOTTOM BAR
-========================= */
-function showBottomBar() {
-  document
-    .querySelector(".bottom-bar")
-    ?.classList.add("show");
-}
+/* =========================================
+   CLIMATE CONTROL
+========================================= */
 
-/* =========================
-   CLIMATE
-========================= */
 let temp = 24;
 
 function changeTemp(val) {
+
   temp += val;
 
   const tempEl =
@@ -163,9 +163,103 @@ function changeTemp(val) {
   }
 }
 
-/* =========================
+/* =========================================
+   NAVIGATION PAGE
+========================================= */
+
+function initNavigationPage() {
+
+  const destinations =
+    document.querySelectorAll(".destination");
+
+  const continueBtn =
+    document.querySelector(".continue-btn");
+
+  let selectedDestination = "";
+
+  destinations.forEach(destination => {
+
+    destination.addEventListener("click", () => {
+
+      destinations.forEach(item =>
+        item.classList.remove("selected")
+      );
+
+      destination.classList.add("selected");
+
+      selectedDestination =
+        destination.textContent.trim();
+    });
+  });
+
+  if (continueBtn) {
+
+    continueBtn.addEventListener("click", () => {
+
+      if (selectedDestination === "") {
+
+        alert("Please select a destination.");
+
+      } else {
+
+        alert(
+          "Destination selected: " +
+          selectedDestination
+        );
+
+        loadScreen("charging-routes");
+      }
+    });
+  }
+
+  const menus =
+    document.querySelectorAll(".menu");
+
+  menus.forEach(menu => {
+
+    menu.addEventListener("click", () => {
+
+      menus.forEach(item =>
+        item.classList.remove("active")
+      );
+
+      menu.classList.add("active");
+    });
+  });
+
+  const stationCards =
+    document.querySelectorAll(".station-card");
+
+  stationCards.forEach(card => {
+
+    card.addEventListener("click", () => {
+
+      stationCards.forEach(item =>
+        item.classList.remove("active")
+      );
+
+      card.classList.add("active");
+    });
+  });
+
+  const startBtn =
+    document.querySelector(".start-btn");
+
+  if (startBtn) {
+
+    startBtn.addEventListener("click", () => {
+
+      alert("Navigation Started");
+
+      loadScreen("navigation");
+    });
+  }
+}
+
+/* =========================================
    APP STARTUP
-========================= */
+========================================= */
+
 document.addEventListener(
   "DOMContentLoaded",
   () => {
@@ -173,16 +267,17 @@ document.addEventListener(
     loadScreen("dashboard");
 
     startClock();
+
     startTopClock();
+
     startCarSimulation();
 
-    // show bottom bar
     setTimeout(() => {
       showBottomBar();
     }, 1500);
 
-    // hide intro clock
     setTimeout(() => {
+
       const clock =
         document.getElementById(
           "clock-screen"
