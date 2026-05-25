@@ -1,98 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Media</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#0b2452;
+color:white;
+}
+
+.media-container{
+display:flex;
+padding:30px;
+gap:25px;
+height:100vh;
+}
+
+.media-sidebar{
+width:220px;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.media-btn{
+background:#56627e;
+padding:20px;
+border:none;
+border-radius:12px;
+color:white;
+font-size:18px;
+text-decoration:none;
+text-align:center;
+cursor:pointer;
+}
+
+.media-btn:hover{
+background:#6f7da1;
+}
+
+.media-player{
+flex:1;
+background:#707b91;
+padding:30px;
+border-radius:15px;
+text-align:center;
+}
+
+.media-player img{
+width:220px;
+border-radius:15px;
+}
+
+.progress{
+height:8px;
+background:white;
+margin:20px auto;
+width:80%;
+border-radius:10px;
+}
+
+.fill{
+width:20%;
+height:100%;
+background:black;
+}
+
+.controls button{
+font-size:30px;
+margin:10px;
+}
+
+.up-next{
+width:250px;
+background:#707b91;
+padding:20px;
+border-radius:15px;
+}
+
+.song{
+display:flex;
+gap:10px;
+margin:15px 0;
+}
+
+.song img{
+width:60px;
+}
+</style>
 </head>
 <body>
 
 <div class="media-container">
 
-    <!-- LEFT PANEL -->
-    <div class="media-sidebar">
-        <button class="media-btn">
-            Bluetooth
-        </button>
+<div class="media-sidebar">
+<button class="media-btn">Bluetooth</button>
+<button class="media-btn">USB</button>
+<button class="media-btn">Radio</button>
+<a href="youtube-music.html" class="media-btn">Youtube Music</a>
+<button class="media-btn">Spotify</button>
+</div>
 
-        <button class="media-btn">
-            USB
-        </button>
+<div class="media-player">
+<img src="assets/unimas.png">
+<h2>UNIMAS Gemilang</h2>
+<div class="progress"><div class="fill"></div></div>
 
-        <button class="media-btn">
-            Radio
-        </button>
+<div class="controls">
+<button>⏮</button>
+<button>▶</button>
+<button>⏭</button>
+</div>
+</div>
 
-        <!-- LINK TO YOUTUBE MUSIC -->
-        <a href="youtube-music.html" class="media-btn active">
-            Youtube Music
-        </a>
+<div class="up-next">
+<h3>Up Next</h3>
 
-        <button class="media-btn">
-            Spotify
-        </button>
-    </div>
-
-
-    <!-- CENTER PLAYER -->
-    <div class="media-player">
-
-        <div class="album-art">
-            <img src="assets/unimas.png" alt="Album">
-        </div>
-
-        <h2>UNIMAS Gemilang</h2>
-
-        <div class="progress-section">
-            <span>0:10</span>
-
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
-
-            <span>3:15</span>
-        </div>
-
-        <div class="controls">
-            <button>⟲</button>
-            <button>⏮</button>
-            <button class="play-btn">▶</button>
-            <button>⏭</button>
-            <button>🔀</button>
-        </div>
-
-    </div>
-
-
-    <!-- RIGHT PANEL -->
-    <div class="up-next">
-
-        <h3>Up Next</h3>
-
-        <div class="song-card">
-            <img src="assets/unimas.png">
-            <span>UNIMAS Gemilang</span>
-        </div>
-
-        <div class="song-card">
-            <img src="assets/unimas.png">
-            <span>UNIMAS Gemilang</span>
-        </div>
-
-        <div class="song-card">
-            <img src="assets/unimas.png">
-            <span>UNIMAS Gemilang</span>
-        </div>
-
-        <div class="song-card">
-            <img src="assets/unimas.png">
-            <span>UNIMAS Gemilang</span>
-        </div>
-
-    </div>
+<div class="song"><img src="assets/unimas.png">UNIMAS</div>
+<div class="song"><img src="assets/unimas.png">UNIMAS</div>
+<div class="song"><img src="assets/unimas.png">UNIMAS</div>
 
 </div>
+
+</div>
+
+<script>
+console.log("Media loaded");
+</script>
 
 </body>
 </html>
