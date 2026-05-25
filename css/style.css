@@ -452,3 +452,114 @@ html, body {
     width: 100%;
     border-radius: 6px;
 }
+/* Main layout */
+.battery-screen {
+    height: calc(100vh - 120px); /* adjust if needed */
+    display: flex;
+    flex-direction: column;
+    background: #13294b;
+    overflow: hidden;
+}
+
+/* 🔋 Battery takes top space */
+.battery-section {
+    flex: 1; /* takes ~40% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Horizontal battery */
+.battery-horizontal {
+    position: relative;
+    width: 70%;
+    max-width: 500px;
+}
+
+/* Battery body */
+.battery-body-h {
+    width: 100%;
+    height: 170px;   /* 🔥 was 80px → now thicker */
+    border: 6px solid #4caf50;
+    border-radius: 18px;
+    position: relative;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+/* Battery tip */
+.battery-body-h::after {
+    content: '';
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%); /* 🔥 keeps it centered vertically */
+    width: 14px;
+    height: 40px; /* slightly bigger */
+    background: #4caf50;
+    border-radius: 4px;
+}
+
+/* Fill */
+.battery-fill-h {
+    height: 100%;
+    background: linear-gradient(to right, #2ecc71, #66ff99);
+    border-radius: 10px;
+}
+
+/* Percentage text */
+.battery-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 42px; 
+    font-weight: bold;
+    color: white;
+}
+
+/* 📦 Cards section */
+.battery-cards {
+    flex: 1.2; /* takes more space than battery */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* Card styling */
+.card {
+    background: #5a6a80;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+}
+
+/* Make content fill card */
+.card-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* Bigger text */
+.range-value {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.status {
+    font-size: 20px;
+    font-weight: bold;
+    color: red;
+}
+
+.battery-section { flex: 2.8; }
+.battery-cards { flex: 1.5;} 

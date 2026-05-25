@@ -1,45 +1,56 @@
+<!-- CSS -->
+<link rel="stylesheet" href="../css/style.css">
+
+<!-- JS -->
+<script src="../js/app.js"></script>
+
+<!-- TOP BAR -->
+    <div id="top-bar"></div>
+
 <div class="battery-screen">
 
-    <!-- MAIN BATTERY STATUS -->
-    <div class="battery-status">
-        <div class="battery-percentage">100%</div>
+    <div class="battery-center">
+        
+       <!-- TOP: BIG HORIZONTAL BATTERY -->
+        <div class="battery-section">
+        <div class="battery-horizontal">
 
-        <div class="battery-visual">
-            <div class="battery-body">
-                <div class="battery-level" style="width: 100%;"></div>
+            <div class="battery-body-h">
+                <div class="battery-fill-h" style="width: 73%;"></div>
             </div>
+
+            <div class="battery-text">73%</div>
+
         </div>
+    </div>
     </div>
 
     <!-- INFO CARDS -->
     <div class="battery-cards">
 
-        <!-- ENERGY USAGE -->
         <div class="card">
             <h3>Energy Usage</h3>
-            <div class="card-content">
-                <img src="../assets/energy-graph.png" alt="Energy Graph" class="energy-graph">
-            </div>
+            <div class="card-content"></div>
         </div>
 
-        <!-- RANGE -->
         <div class="card">
             <h3>Range</h3>
-            <div class="card-content center">
-                <div class="range-value">250 <span>Km</span></div>
+            <div class="card-content">
+                <div class="range-value">250 Km</div>
                 <div class="range-sub">12.0 h expected</div>
             </div>
         </div>
 
-        <!-- CHARGING PORT -->
         <div class="card">
             <h3>Charging Port</h3>
-            <div class="card-content center">
-                <div class="lock-icon">🔒</div>
-                <div class="status closed">CLOSED</div>
+            <div class="card-content">
+                <div class="status">CLOSED</div>
             </div>
         </div>
 
     </div>
-
+    </div>
 </div>
+
+<!-- BOTTOM BAR -->
+    <div id="bottom-bar"></div>
